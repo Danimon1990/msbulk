@@ -105,7 +105,7 @@ export default function Requests() {
       })
 
       if (response.ok) {
-        setSupportedRequests(prev => new Set([...prev, requestId]))
+        setSupportedRequests(prev => new Set(Array.from(prev).concat(requestId)))
         fetchRequests()
       } else {
         const error = await response.json()
