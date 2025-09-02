@@ -112,13 +112,13 @@ async function main() {
       productName: 'Raw Cashews',
       description: 'Looking for bulk raw cashews, unsalted',
       userId: member1.id,
-      status: 'pending'
+      status: 'pending' as const
     },
     {
       productName: 'Maple Syrup',
       description: 'Pure maple syrup in bulk containers',
       userId: member2.id,
-      status: 'pending'
+      status: 'pending' as const
     }
   ]
 
