@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         Role     @default(member)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  orders           Order[]
+  productMovements ProductMovement[]
+  productRequests  ProductRequest[]
+  requestSupports  RequestSupport[]
+  newsArticles     News[]
+
+  @@map("users")
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  description  String?  @db.Text
+  category     String?  @db.VarChar(100)
+  unitPrice    Decimal  @map("unit_price") @db.Decimal(10, 2)
+  currentStock Int      @default(0) @map("current_stock")
+  unitType     String   @default("units") @map("unit_type") @db.VarChar(50)
+  supplier     String?  @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  orders           Order[]
+  productMovements ProductMovement[]
+
+  @@map("products")
+}
+
+model ProductMovement {
+  id           Int          @id @default(autoincrement())
+  productId    Int          @map("product_id")
+  movementType MovementType @map("movement_type")
+  quantity     Int
+  userId       Int          @map("user_id")
+  notes        String?      @db.Text
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("product_movements")
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  userId     Int         @map("user_id")
+  productId  Int         @map("product_id")
+  quantity   Int
+  unitPrice  Decimal     @map("unit_price") @db.Decimal(10, 2)
+  totalPrice Decimal     @map("total_price") @db.Decimal(10, 2)
+  status     OrderStatus @default(pending)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("orders")
+}
+
+model ProductRequest {
+  id                 Int           @id @default(autoincrement())
+  userId             Int           @map("user_id")
+  productName        String        @map("product_name") @db.VarChar(255)
+  description        String?       @db.Text
+  estimatedPrice     Decimal?      @map("estimated_price") @db.Decimal(10, 2)
+  supplierSuggestion String?       @map("supplier_suggestion") @db.VarChar(255)
+  status             RequestStatus @default(pending)
+  adminNotes         String?       @map("admin_notes") @db.Text
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  user            User             @relation(fields: [userId], references: [id])
+  requestSupports RequestSupport[]
+
+  @@map("product_requests")
+}
+
+model RequestSupport {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  requestId Int      @map("request_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user    User           @relation(fields: [userId], references: [id])
+  request ProductRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, requestId])
+  @@map("request_support")
+}
+
+model News {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  authorId  Int      @map("author_id")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("news")
+}
+
+enum Role {
+  admin
+  member
+}
+
+enum MovementType {
+  stock_added
+  stock_removed
+  purchase
+  adjustment
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  fulfilled
+  cancelled
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+  fulfilled
+}
