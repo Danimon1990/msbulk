@@ -35,9 +35,16 @@ export default function Inventory() {
     try {
       const response = await fetch('/api/products')
       const data = await response.json()
-      setProducts(data)
+      
+      if (response.ok && Array.isArray(data)) {
+        setProducts(data)
+      } else {
+        console.error('Failed to fetch products:', data.error || 'Unknown error')
+        setProducts([]) // Set empty array to prevent filter errors
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error)
+      setProducts([]) // Set empty array to prevent filter errors
     } finally {
       setLoading(false)
     }

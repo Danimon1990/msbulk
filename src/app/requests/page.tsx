@@ -11,6 +11,11 @@ interface ProductRequest {
   description: string
   status: string
   createdAt: string
+  goal: number
+  amountWanted: number
+  totalRequested: number
+  progressPercentage: number
+  remainingNeeded: number
   user: {
     name: string
     email: string
@@ -278,6 +283,35 @@ export default function Requests() {
                         {request.requestSupports.length} supporters
                       </span>
                     </div>
+                    
+                    {/* Progress bar for approved requests */}
+                    {request.status === 'approved' && request.goal && (
+                      <div className="mb-3 w-48">
+                        <div className="text-xs text-gray-600 mb-1">
+                          Progress: {request.totalRequested?.toFixed(1) || 0}/{request.goal} lbs
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              request.totalRequested >= request.goal 
+                                ? 'bg-green-500' 
+                                : request.totalRequested >= request.goal * 0.7 
+                                  ? 'bg-yellow-500' 
+                                  : 'bg-blue-500'
+                            }`}
+                            style={{ 
+                              width: `${request.progressPercentage || 0}%` 
+                            }}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {request.remainingNeeded > 0 
+                            ? `${request.remainingNeeded.toFixed(1)} lbs more needed`
+                            : 'Goal reached! 🎉'
+                          }
+                        </div>
+                      </div>
+                    )}
                     
                     {session.user.email !== request.user.email && (
                       <div>

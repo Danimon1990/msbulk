@@ -30,6 +30,9 @@ interface ProductRequest {
   amountWanted: number
   priceRange: string
   createdAt: string
+  totalRequested: number
+  progressPercentage: number
+  remainingNeeded: number
   user: {
     id: string
     name: string
@@ -532,11 +535,11 @@ export default function Admin() {
                         <div className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <div className="text-sm font-medium">
-                              {request.requestSupports?.length || 0}/{request.goal} lbs
+                              {request.totalRequested?.toFixed(1) || 0}/{request.goal || 0} lbs
                             </div>
                             <div className="text-xs text-gray-500">
-                              {request.goal - (request.requestSupports?.length || 0) > 0 
-                                ? `${request.goal - (request.requestSupports?.length || 0)} lbs more needed`
+                              {request.remainingNeeded > 0 
+                                ? `${request.remainingNeeded.toFixed(1)} lbs more needed`
                                 : 'Goal reached! 🎉'
                               }
                             </div>
@@ -544,16 +547,19 @@ export default function Admin() {
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div 
                               className={`h-2 rounded-full transition-all duration-300 ${
-                                (request.requestSupports?.length || 0) >= request.goal 
+                                request.totalRequested >= request.goal 
                                   ? 'bg-green-500' 
-                                  : (request.requestSupports?.length || 0) >= request.goal * 0.7 
+                                  : request.totalRequested >= request.goal * 0.7 
                                     ? 'bg-yellow-500' 
                                     : 'bg-blue-500'
                               }`}
                               style={{ 
-                                width: `${Math.min(100, ((request.requestSupports?.length || 0) / request.goal) * 100)}%` 
+                                width: `${request.progressPercentage || 0}%` 
                               }}
                             ></div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {request.requestSupports?.length || 0} supporters + initial requester
                           </div>
                         </div>
                       </td>

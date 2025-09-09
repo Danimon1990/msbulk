@@ -33,12 +33,12 @@ model Product {
   currentStock     Int               @default(0) @map("current_stock")
   unitType         String            @default("units") @map("unit_type") @db.VarChar(50)
   supplier         String?           @db.VarChar(255)
-  unitsPerCase     Int?              @map("units_per_case")
-  unitSize         String?           @map("unit_size") @db.VarChar(50)
-  totalUnits       Int?              @map("total_units")
-  soldUnits        Int               @default(0) @map("sold_units")
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
+  soldUnits        Int               @default(0) @map("sold_units")
+  totalUnits       Int?              @map("total_units")
+  unitSize         String?           @map("unit_size") @db.VarChar(50)
+  unitsPerCase     Int?              @map("units_per_case")
   orders           Order[]
   productMovements ProductMovement[]
 
