@@ -39,13 +39,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { productName, description } = body
+    const { productName, description, priceRange, amountWanted } = body
 
     const productRequest = await prisma.productRequest.create({
       data: {
         userId: parseInt(session.user.id),
         productName,
         description,
+        priceRange,
+        amountWanted: amountWanted ? parseFloat(amountWanted) : null,
         status: 'pending'
       }
     })

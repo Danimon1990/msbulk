@@ -33,6 +33,10 @@ model Product {
   currentStock     Int               @default(0) @map("current_stock")
   unitType         String            @default("units") @map("unit_type") @db.VarChar(50)
   supplier         String?           @db.VarChar(255)
+  unitsPerCase     Int?              @map("units_per_case")
+  unitSize         String?           @map("unit_size") @db.VarChar(50)
+  totalUnits       Int?              @map("total_units")
+  soldUnits        Int               @default(0) @map("sold_units")
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
   orders           Order[]
@@ -82,7 +86,9 @@ model ProductRequest {
   adminNotes         String?          @map("admin_notes")
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
-  goal               Int?             @default(10)
+  goal               Decimal?         @default(100) @db.Decimal(10, 2)
+  amountWanted       Decimal?         @map("amount_wanted") @db.Decimal(10, 2)
+  priceRange         String?          @map("price_range") @db.VarChar(100)
   user               User             @relation(fields: [userId], references: [id])
   requestSupports    RequestSupport[]
 

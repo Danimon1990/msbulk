@@ -62,7 +62,7 @@ A community-driven bulk food purchasing platform built with Next.js, TypeScript,
    ```
 
 6. **Open your browser**
-   Navigate to `http://localhost:3000`
+   Navigate to `https://bulk-blayne-api-885949875267.us-central1.run.appbr`
 
 ## Test Accounts
 

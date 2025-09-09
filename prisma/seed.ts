@@ -50,42 +50,66 @@ async function main() {
       description: '25 lb bag of organic brown rice',
       category: 'Grains',
       unitPrice: 24.99,
-      currentStock: 50
+      currentStock: 50,
+      unitsPerCase: 1,
+      unitSize: '25 lb bag',
+      totalUnits: 50,
+      soldUnits: 12
     },
     {
       name: 'Raw Almonds',
       description: 'Premium raw almonds, 10 lb bag',
       category: 'Nuts',
       unitPrice: 89.99,
-      currentStock: 25
+      currentStock: 25,
+      unitsPerCase: 1,
+      unitSize: '10 lb bag',
+      totalUnits: 25,
+      soldUnits: 8
     },
     {
       name: 'Quinoa',
       description: 'Organic tri-color quinoa, 5 lb bag',
       category: 'Grains',
       unitPrice: 32.99,
-      currentStock: 30
+      currentStock: 30,
+      unitsPerCase: 1,
+      unitSize: '5 lb bag',
+      totalUnits: 30,
+      soldUnits: 15
     },
     {
       name: 'Coconut Oil',
       description: 'Cold-pressed coconut oil, 1 gallon',
       category: 'Oils',
       unitPrice: 45.99,
-      currentStock: 20
+      currentStock: 20,
+      unitsPerCase: 1,
+      unitSize: '1 gallon',
+      totalUnits: 20,
+      soldUnits: 5
     },
     {
       name: 'Black Beans',
       description: 'Dried organic black beans, 25 lb bag',
       category: 'Legumes',
       unitPrice: 39.99,
-      currentStock: 15
+      currentStock: 15,
+      unitsPerCase: 1,
+      unitSize: '25 lb bag',
+      totalUnits: 15,
+      soldUnits: 3
     },
     {
       name: 'Chia Seeds',
       description: 'Organic chia seeds, 5 lb bag',
       category: 'Seeds',
       unitPrice: 59.99,
-      currentStock: 12
+      currentStock: 12,
+      unitsPerCase: 1,
+      unitSize: '5 lb bag',
+      totalUnits: 12,
+      soldUnits: 7
     }
   ]
 
@@ -111,12 +135,16 @@ async function main() {
     {
       productName: 'Raw Cashews',
       description: 'Looking for bulk raw cashews, unsalted',
+      priceRange: '$8-12 per pound',
+      amountWanted: 5.5,
       userId: member1.id,
       status: 'pending' as const
     },
     {
       productName: 'Maple Syrup',
       description: 'Pure maple syrup in bulk containers',
+      priceRange: '$15-20 per gallon',
+      amountWanted: 2.0,
       userId: member2.id,
       status: 'pending' as const
     }

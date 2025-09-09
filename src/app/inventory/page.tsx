@@ -12,6 +12,10 @@ interface Product {
   category: string
   unitPrice: string | number
   currentStock: number
+  unitsPerCase: number
+  unitSize: string
+  totalUnits: number
+  soldUnits: number
   createdAt: string
 }
 
@@ -119,7 +123,8 @@ export default function Inventory() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units Per Case</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock (Sold/Total)</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
@@ -138,18 +143,32 @@ export default function Inventory() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${typeof product.unitPrice === 'string' ? parseFloat(product.unitPrice).toFixed(2) : product.unitPrice.toFixed(2)}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div>
+                        <div className="font-medium">{product.unitsPerCase || 'N/A'}</div>
+                        <div className="text-xs text-gray-500">{product.unitSize || 'units'}</div>
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`text-sm font-medium ${product.currentStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {product.currentStock} available
-                      </span>
+                      <div className="space-y-1">
+                        <div className={`text-sm font-medium ${product.soldUnits < (product.totalUnits || 0) ? 'text-green-600' : 'text-red-600'}`}>
+                          {product.soldUnits || 0}/{product.totalUnits || 0}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {product.totalUnits && product.soldUnits ? 
+                            `${product.totalUnits - product.soldUnits} remaining` : 
+                            'No data'
+                          }
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {product.currentStock > 0 ? (
+                      {(product.totalUnits || 0) > (product.soldUnits || 0) ? (
                         <div className="flex items-center space-x-2">
                           <Input
                             type="number"
                             min="1"
-                            max={product.currentStock}
+                            max={(product.totalUnits || 0) - (product.soldUnits || 0)}
                             value={orderQuantities[product.id] || ''}
                             onChange={(e) => setOrderQuantities(prev => ({
                               ...prev,

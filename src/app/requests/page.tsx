@@ -30,7 +30,9 @@ export default function Requests() {
   const [showForm, setShowForm] = useState(false)
   const [newRequest, setNewRequest] = useState({
     productName: '',
-    description: ''
+    description: '',
+    priceRange: '',
+    amountWanted: ''
   })
   const [supportedRequests, setSupportedRequests] = useState<Set<number>>(new Set())
 
@@ -83,7 +85,7 @@ export default function Requests() {
       })
 
       if (response.ok) {
-        setNewRequest({ productName: '', description: '' })
+        setNewRequest({ productName: '', description: '', priceRange: '', amountWanted: '' })
         setShowForm(false)
         fetchRequests()
         alert('Request submitted successfully!')
@@ -184,6 +186,37 @@ export default function Requests() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Price Range (e.g., $2-3 per pound)
+                  </label>
+                  <Input
+                    value={newRequest.priceRange}
+                    onChange={(e) => setNewRequest(prev => ({
+                      ...prev,
+                      priceRange: e.target.value
+                    }))}
+                    placeholder="e.g., $2-3 per pound"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amount Wanted (pounds)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={newRequest.amountWanted}
+                    onChange={(e) => setNewRequest(prev => ({
+                      ...prev,
+                      amountWanted: e.target.value
+                    }))}
+                    placeholder="e.g., 5.5"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Description
                   </label>
                   <textarea
@@ -194,6 +227,7 @@ export default function Requests() {
                       ...prev,
                       description: e.target.value
                     }))}
+                    placeholder="Additional details about your request..."
                   />
                 </div>
                 <div className="flex space-x-2">
