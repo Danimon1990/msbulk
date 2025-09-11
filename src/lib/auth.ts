@@ -5,8 +5,18 @@ import { prisma } from './prisma'
 import bcrypt from 'bcryptjs'
 import type { Adapter } from 'next-auth/adapters'
 
+// Dynamic URL based on environment
+const getNextAuthUrl = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000'
+  }
+  return process.env.NEXTAUTH_URL || 'https://bulk-blayne-xncymwptya-uc.a.run.app'
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
+  secret: process.env.NEXTAUTH_SECRET,
+  url: getNextAuthUrl(),
   providers: [
     CredentialsProvider({
       name: 'credentials',
