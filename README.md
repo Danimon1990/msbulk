@@ -39,11 +39,6 @@ A community-driven bulk food purchasing platform built with Next.js, TypeScript,
 
 2. **Database Setup**
    - Create a PostgreSQL database named `bulk_blayne`
-   - Copy `.env.example` to `.env`
-   - Update the `DATABASE_URL` in `.env` with your database credentials:
-   ```
-   DATABASE_URL="postgresql://username:password@localhost:5432/bulk_blayne?schema=public"
-   ```
 
 3. **Generate Prisma Client and Push Schema**
    ```bash
@@ -67,14 +62,6 @@ A community-driven bulk food purchasing platform built with Next.js, TypeScript,
 ## Test Accounts
 
 After running the seed script, you can use these test accounts:
-
-- **Admin Account**
-  - Email: `admin@foodnetwork.com`
-  - Password: `admin123`
-
-- **Member Accounts**
-  - Email: `john@example.com` / Password: `member123`
-  - Email: `jane@example.com` / Password: `member123`
 
 ## Project Structure
 
