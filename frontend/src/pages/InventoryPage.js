@@ -1,7 +1,5 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   ShoppingCartIcon, 
   MagnifyingGlassIcon,
@@ -12,99 +10,66 @@ import {
   InformationCircleIcon,
   EyeIcon,
   EyeSlashIcon
-} from '@heroicons/react/24/outline'
-import { fetchInventoryItems, InventoryItem } from '@/lib/inventoryService'
+} from '@heroicons/react/24/outline';
+import { 
+  inventoryItems, 
+  inventoryCategories, 
+  getItemsByCategory, 
+  searchItems,
+  getPopularItems 
+} from '../data/inventoryData';
 
-// Categories for filtering
-const inventoryCategories = [
-  { id: 'all', name: 'All Items', icon: '🛒' },
-  { id: 'fruits', name: 'Fresh Fruits', icon: '🍌' },
-  { id: 'vegetables', name: 'Fresh Vegetables', icon: '🥕' },
-  { id: 'grains', name: 'Grains & Cereals', icon: '🌾' },
-  { id: 'legumes', name: 'Legumes & Beans', icon: '🫘' },
-  { id: 'nuts', name: 'Nuts & Seeds', icon: '🥜' },
-  { id: 'oils', name: 'Oils & Vinegars', icon: '🫒' },
-  { id: 'spices', name: 'Spices & Seasonings', icon: '🌶️' },
-  { id: 'sweeteners', name: 'Sweeteners', icon: '🍯' },
-  { id: 'beverages', name: 'Beverages', icon: '☕' },
-  { id: 'dairy', name: 'Dairy Alternatives', icon: '🥛' },
-  { id: 'pantry', name: 'Pantry Staples', icon: '🏺' }
-]
+const InventoryPage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showDetails, setShowDetails] = useState({});
+  const [sortBy, setSortBy] = useState('popularity'); // popularity, price, name
 
-export default function InventoryPage() {
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [showDetails, setShowDetails] = useState({})
-  const [sortBy, setSortBy] = useState('popularity') // popularity, price, name
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const fetchItems = async () => {
-    setLoading(true)
-    try {
-      const items = await fetchInventoryItems()
-      setInventoryItems(items)
-    } catch (error) {
-      console.error('Failed to fetch inventory items:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const toggleDetails = (itemId: number) => {
+  const toggleDetails = (itemId) => {
     setShowDetails(prev => ({
       ...prev,
       [itemId]: !prev[itemId]
-    }))
-  }
+    }));
+  };
 
   const getFilteredItems = () => {
-    let items = inventoryItems
+    let items = inventoryItems;
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      items = items.filter(item => item.category === selectedCategory)
+      items = getItemsByCategory(selectedCategory);
     }
 
     // Filter by search term
     if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      items = items.filter(item => 
-        item.name.toLowerCase().includes(term) ||
-        item.description.toLowerCase().includes(term) ||
-        item.tags.some(tag => tag.toLowerCase().includes(term))
-      )
+      items = searchItems(searchTerm);
     }
 
     // Sort items
     items = [...items].sort((a, b) => {
       switch (sortBy) {
         case 'price':
-          return a.price - b.price
+          return a.price - b.price;
         case 'name':
-          return a.name.localeCompare(b.name)
+          return a.name.localeCompare(b.name);
         case 'popularity':
         default:
-          return b.popularity - a.popularity
+          return b.popularity - a.popularity;
       }
-    })
+    });
 
-    return items
-  }
+    return items;
+  };
 
-  const filteredItems = getFilteredItems()
+  const filteredItems = getFilteredItems();
 
-  const handleOrderClick = (item: InventoryItem) => {
+  const handleOrderClick = (item) => {
     // This would normally check if user is logged in
-    alert('Please sign up to place orders. Click "Sign Up" in the top navigation to get started!')
-  }
+    alert('Please sign up to place orders. Click "Sign Up" in the top navigation to get started!');
+  };
 
-  const renderStars = (popularity: number) => {
-    const stars = Math.round(popularity / 20) // Convert 0-100 to 0-5 stars
+  const renderStars = (popularity) => {
+    const stars = Math.round(popularity / 20); // Convert 0-100 to 0-5 stars
     return (
       <div className="flex items-center gap-1">
         {[...Array(5)].map((_, i) => (
@@ -115,19 +80,8 @@ export default function InventoryPage() {
         ))}
         <span className="text-sm text-gray-500 ml-1">({popularity}%)</span>
       </div>
-    )
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading inventory...</p>
-        </div>
-      </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -158,8 +112,8 @@ export default function InventoryPage() {
                 <input
                   type="text"
                   placeholder="Search items, suppliers, or tags..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
@@ -168,18 +122,18 @@ export default function InventoryPage() {
             {/* Category Filter */}
             <div className="flex items-center gap-2">
               <FunnelIcon className="h-5 w-5 text-gray-400" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
                 className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
                 {inventoryCategories.map(category => (
                   <option key={category.id} value={category.id}>
                     {category.icon} {category.name}
                   </option>
-              ))}
-            </select>
-          </div>
+                ))}
+              </select>
+            </div>
 
             {/* Sort */}
             <div className="flex items-center gap-2">
@@ -201,19 +155,19 @@ export default function InventoryPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <UserIcon className="h-6 w-6 text-primary-600" />
-                      <div>
+              <div>
                 <h3 className="font-semibold text-primary-900">Want to place an order?</h3>
                 <p className="text-primary-700">Sign up for a free account to start ordering bulk items for pickup or delivery.</p>
               </div>
             </div>
             <Link
-              href="/auth/signup"
+              to="/signup"
               className="btn-primary whitespace-nowrap"
             >
               Sign Up Now
             </Link>
-                      </div>
-                      </div>
+          </div>
+        </div>
 
         {/* Results Summary */}
         <div className="mb-6">
@@ -222,7 +176,7 @@ export default function InventoryPage() {
             {searchTerm && ` for "${searchTerm}"`}
             {selectedCategory !== 'all' && ` in ${inventoryCategories.find(c => c.id === selectedCategory)?.name}`}
           </p>
-                        </div>
+        </div>
 
         {/* Inventory Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -246,8 +200,8 @@ export default function InventoryPage() {
                   {item.tags.length > 3 && (
                     <span className="text-xs text-gray-500">+{item.tags.length - 3} more</span>
                   )}
-                        </div>
-                      </div>
+                </div>
+              </div>
 
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
@@ -259,8 +213,8 @@ export default function InventoryPage() {
                   <div className="flex items-center gap-2 text-sm text-green-600">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span>{item.stockQuantity} in stock</span>
-                        </div>
-                      ) : (
+                  </div>
+                ) : (
                   <div className="flex items-center gap-2 text-sm text-red-600">
                     <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                     <span>Out of stock</span>
@@ -308,7 +262,7 @@ export default function InventoryPage() {
                     </div>
                   </div>
                 )}
-          </div>
+              </div>
 
               <button
                 onClick={() => handleOrderClick(item)}
@@ -332,8 +286,8 @@ export default function InventoryPage() {
                 <p className="text-gray-500 text-lg">No items found matching your search criteria.</p>
                 <button
                   onClick={() => {
-                    setSearchTerm('')
-                    setSelectedCategory('all')
+                    setSearchTerm('');
+                    setSelectedCategory('all');
                   }}
                   className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
                 >
@@ -352,15 +306,15 @@ export default function InventoryPage() {
                   </p>
                 </div>
                 <Link
-                  href="/requests"
+                  to="/requests"
                   className="mt-4 inline-block text-primary-600 hover:text-primary-700 font-medium"
                 >
                   Request items you'd like to see →
                 </Link>
               </div>
             )}
-            </div>
-          )}
+          </div>
+        )}
       </div>
 
       {/* Call to Action */}
@@ -374,14 +328,14 @@ export default function InventoryPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth/signup"
+              to="/signup"
               className="btn-primary bg-yellow-500 hover:bg-yellow-600 text-primary-900"
             >
               <ShoppingCartIcon className="h-5 w-5 mr-2" />
               Sign Up to Order
             </Link>
             <Link
-              href="/requests"
+              to="/requests"
               className="btn-secondary border-white text-white hover:bg-white hover:text-primary-600"
             >
               Request New Items
@@ -390,5 +344,7 @@ export default function InventoryPage() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default InventoryPage;
