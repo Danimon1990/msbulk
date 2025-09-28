@@ -36,7 +36,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [showDetails, setShowDetails] = useState({})
+  const [showDetails, setShowDetails] = useState<Record<number, boolean>>({})
   const [sortBy, setSortBy] = useState('popularity') // popularity, price, name
 
   useEffect(() => {
